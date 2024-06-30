@@ -1,14 +1,13 @@
 {
-  "dependencies": {
-    "express": "^4.19.2"
-  }, 
+  "name": "test-scripts",
+  "version": "1.0.0",
   "scripts": {
     "hello": "echo 'hello Node.js'", 
     "prehello": "echo 'PRE HELLO'", 
     "posthello": "echo 'POST HELLO'", 
     "test": "echo 'test Node.js'", 
     "stop": "echo 'stop Node.js'", 
-    "start": "node board.js", 
+    "start": "node index.js", 
     "restart": "echo 'restart Node.js'"
   }
 }
