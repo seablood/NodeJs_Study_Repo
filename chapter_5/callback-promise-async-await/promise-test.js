@@ -28,11 +28,12 @@ function getResult(user){
 }
 
 function registerByPromise(user){
+    // 비동기 호출이지만 Promise를 이용해 순서를 보장함
     const result = saveDB(user)
                     .then(sendEmail)
                     .then(getResult)
                     .catch(error => new Error(error))
-                    .finally(() => console.log("완료")); // 비동기 호출이지만 Promise를 이용해 순서를 보장함
+                    .finally(() => console.log(`현재 DB 사이즈 : ${DB.length}개`));
     console.log(result); // 아직 완료되지 않은 상태에서 불리므로 지연상태로 돌입
     return result;
 }
