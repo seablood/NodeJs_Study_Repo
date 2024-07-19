@@ -22,8 +22,20 @@ app.listen(3000, async () => {
     console.log("MongoDB Connection Success");
 });
 
-app.get("/", (_, res) => {
-    res.render("home", {title: "테스트 게시판"});
+app.get("/", async (req, res) => {
+    const page = req.query.page || 1;
+    const search = req.query.search || "";
+
+    try{
+        const [posts, paginator] = await postService.list(collection, search, page);
+        console.log(paginator.hasNext);
+
+        res.render("home", {title: "테스트 게시판", search, paginator, posts});
+    } catch (err){
+        console.log(err);
+
+        res.render("home", {title: "테스트 게시판"});
+    }
 });
 
 app.get("/write", (_, res) => {

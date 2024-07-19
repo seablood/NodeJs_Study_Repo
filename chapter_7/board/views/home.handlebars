@@ -1,8 +1,8 @@
 <h1>{{title}}</h1> <!-- ❶ 타이틀 영역 -->
 
 <!-- ❷ 검색어 영역  -->
-<input type="text" name="search" id="search" value="" size="50" placeholder="검색어를 입력하세요." />
-<button>검색</button>
+<input type="text" name="search" id="search" value="{{search}}" size="50" placeholder="검색어를 입력하세요." />
+<button onclick="location.href=`/?search=${document.getElementById('search').value}`">검색</button>
 <br />
 
 <!-- ❸ 글쓰기 페이지 이동 링크  -->
@@ -21,12 +21,14 @@
       </tr>
     </thead>
     <tbody>
+      {{#each posts}}
       <tr>
-        <td><a href="/detail/">타이틀</a></td>
-        <td align="center">작성자이름</td>
-        <td align="center">99999</td>
-        <td align="center">2022.12.25</td>
+        <td><a href="/detail/{{_id}}">{{title}}</a></td>
+        <td>{{writer}}</td>
+        <td>{{hits}}</td>
+        <td>{{dateString createdDate}}</td>
       </tr>
+      {{/each}}
     </tbody>
   </table>
 </div>
