@@ -42,12 +42,27 @@ app.get("/write", (_, res) => {
     res.render("write", {title: "테스트 게시판"});
 });
 
-app.get("/detail/:id", (_, res) => {
-    res.render("detail", {title: "테스트 게시판"});
+app.get("/detail/:id", async (req, res) => {
+    const id = req.params.id;
+    const result = await postService.getDetailPost(collection, id);
+    res.render("detail", {title: "테스트 게시판", post: result.value});
 });
 
 app.post("/write", async (req, res) => {
     const post = req.body;
     const result = await postService.writeService(collection, post);
     res.redirect(`/detail/${result.insertedId}`);
+});
+
+app.post("/check-password", async (req, res) => {
+    const {id, password} = req.body;
+
+    const post = await postService.getPostByIdAndPassword(collection, {id, password});
+
+    if(!post){
+        res.status(404).json({isExist: false});
+    }
+    else{
+        res.json({isExist: true});
+    }
 });
