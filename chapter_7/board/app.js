@@ -68,8 +68,14 @@ app.post("/check-password", async (req, res) => { // 패스워드 인증 여부 
 });
 
 app.get("/modify/:id", async (req, res) => { // 게시글 수정 페이지 라우팅
-    const post = await postService.getPostById(collection, req.params.id);
-    res.render("write", {title: "테스트 게시판", mode: "modify", post: post});
+    const principal = req.query.principal || 0;
+    if(principal === 0){
+        res.redirect("/");
+    }
+    else{
+        const post = await postService.getPostById(collection, req.params.id);
+        res.render("write", {title: "테스트 게시판", mode: "modify", post: post});
+    }
 });
 
 app.post("/modify", async (req, res) => { // 게시글 수정 POST 요청 라우팅
@@ -84,9 +90,15 @@ app.post("/modify", async (req, res) => { // 게시글 수정 POST 요청 라우
 
     try{
         const result = await postService.updatePost(collection, id, post);
+
+        if(result.ok === 1){
+            console.log("수정에 성공하였습니다.");
+        }
+        else{
+            console.log("수정에 실패하였습니다.");
+        }
     } catch (err){
         console.log(err);
-        alert("수정에 실패하였습니다.");
         res.redirect(`/detail/${id}`);
     } finally{
         res.redirect(`/detail/${id}`);

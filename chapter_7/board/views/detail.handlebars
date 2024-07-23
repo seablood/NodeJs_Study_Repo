@@ -75,7 +75,7 @@
     const data = await result.json();
 
     if(data.isExist){
-      document.location = "/modify/{{post._id}}"
+      document.location = "/modify/{{post._id}}?principal=1"
     }
     else{
       alert("패스워드 입력이 잘못되었습니다. ");
