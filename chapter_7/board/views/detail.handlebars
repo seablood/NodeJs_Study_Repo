@@ -16,12 +16,13 @@
 
 <section>
   <div>
-    <h3>3개의 댓글이 있습니다.</h3>
+    <h3>{{lengthOfList comments}}개의 댓글이 있습니다.</h3>
   </div>
 
   <form method="post" action="/write-comment">
     <div>
       <div>
+        <input type="hidden" name="id" value="{{_id}}">
         <input type="text" name="name" placeholder="이름" />
         <input type="password" name="password" placeholder="비밀번호" />
       </div>
@@ -34,18 +35,20 @@
 </section>
 
 <section>
+  {{#each comments}}
   <div>
     <div>
-      작성자 : <b>댓글 작성자</b>
+      작성자 : <b>{{name}}</b>
     </div>
     <div>
-      작성일시 : 2022-01-01 00:00:00
-      <button onclick="deleteComment('1')">삭제</button>
+      작성일시 : {{dateString createdDate}}
+      <button onclick="deleteComment('{{idx}}')">삭제</button>
     </div>
   </div>
   <div>
     <pre>{{comment}}</pre>
   </div>
+  {{/each}}
 </section>
 {{/with}}
 <footer>
@@ -54,13 +57,6 @@
   </div>
 </footer>
 <script>
-  const postOption = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }
-
   async function modifyPost() {
     const password = prompt("패스워드를 입력해주세요!!");
 
@@ -85,5 +81,28 @@
       alert("패스워드 입력이 잘못되었습니다. ");
     }
   }
-  async function deletePost() {}
+  async function deletePost() {
+    const password = prompt("패스워드를 입력해주세요!!");
+    if(!password){
+      return;
+    }
+
+    const result = await fetch("/delete", {
+      method: 'DELETE', 
+      headers: {
+        'Content-Type': 'application/json', 
+      }, 
+      body: JSON.stringify({id: "{{post._id}}", password: password})
+    });
+
+    const data = await result.json();
+    if(!data.isSuccess){
+      alert("삭제에 실패하였습니다.");
+      return;
+    }
+    else{
+      alert("삭제에 성공하였습니다.");
+      document.location = "/";
+    }
+  }
 </script>

@@ -3,6 +3,7 @@ const handlebars = require("express-handlebars");
 const app = express();
 const mongodbConnection = require("./configs/mongodb-connection");
 const postService = require("./services/post-service");
+const {ObjectId} = require("mongodb");
 
 app.engine("handlebars", 
     handlebars.create({
@@ -17,18 +18,17 @@ app.use(express.urlencoded({extended: true}));
 let collection;
 app.listen(3000, async () => {
     console.log("Start Server");
-    const mongoClient = await mongodbConnection();
-    collection = mongoClient.db("test").collection("post");
+    const mongoClient = await mongodbConnection(); // 몽고디비 연결
+    collection = mongoClient.db("test").collection("post"); // 컬렉션 로딩
     console.log("MongoDB Connection Success");
 });
 
-app.get("/", async (req, res) => {
+app.get("/", async (req, res) => { // 메인 페이지 라우팅
     const page = req.query.page || 1;
     const search = req.query.search || "";
 
     try{
         const [posts, paginator] = await postService.list(collection, search, page);
-        console.log(paginator.hasNext);
 
         res.render("home", {title: "테스트 게시판", search, paginator, posts});
     } catch (err){
@@ -38,23 +38,23 @@ app.get("/", async (req, res) => {
     }
 });
 
-app.get("/write", (_, res) => {
-    res.render("write", {title: "테스트 게시판"});
+app.get("/write", (_, res) => { // 글 작성 페이지 라우팅
+    res.render("write", {title: "테스트 게시판", mode: "create"});
 });
 
-app.get("/detail/:id", async (req, res) => {
+app.get("/detail/:id", async (req, res) => { // 게시글 상세 페이지 라우팅
     const id = req.params.id;
     const result = await postService.getDetailPost(collection, id);
     res.render("detail", {title: "테스트 게시판", post: result.value});
 });
 
-app.post("/write", async (req, res) => {
+app.post("/write", async (req, res) => { // 게시글 등록 POST 요청 라우팅
     const post = req.body;
     const result = await postService.writeService(collection, post);
     res.redirect(`/detail/${result.insertedId}`);
 });
 
-app.post("/check-password", async (req, res) => {
+app.post("/check-password", async (req, res) => { // 패스워드 인증 여부 확인
     const {id, password} = req.body;
 
     const post = await postService.getPostByIdAndPassword(collection, {id, password});
@@ -64,5 +64,85 @@ app.post("/check-password", async (req, res) => {
     }
     else{
         res.json({isExist: true});
+    }
+});
+
+app.get("/modify/:id", async (req, res) => { // 게시글 수정 페이지 라우팅
+    const post = await postService.getPostById(collection, req.params.id);
+    res.render("write", {title: "테스트 게시판", mode: "modify", post: post});
+});
+
+app.post("/modify", async (req, res) => { // 게시글 수정 POST 요청 라우팅
+    const {id, title, writer, password, content} = req.body;
+    const post = {
+        title, 
+        writer, 
+        password, 
+        content, 
+        createdDate: new Date().toISOString(), 
+    };
+
+    try{
+        const result = await postService.updatePost(collection, id, post);
+    } catch (err){
+        console.log(err);
+        alert("수정에 실패하였습니다.");
+        res.redirect(`/detail/${id}`);
+    } finally{
+        res.redirect(`/detail/${id}`);
+    }
+});
+
+app.delete("/delete", async (req, res) => { // 게시글 삭제 DELETE 요청 라우팅
+    const {id, password} = req.body;
+
+    try{
+        const data = await collection.deleteOne({_id: ObjectId(id), password: password});
+
+        if(data.deletedCount !== 1){
+            console.log("삭제 실패");
+            res.json({isSuccess: false});
+        }
+        else{
+            console.log("삭제 성공");
+            res.json({isSuccess: true});
+        }
+    } catch (err){
+        console.log("삭제 실패");
+        res.json({isSuccess: false});
+    }
+});
+
+app.post("/write-comment", async (req, res) => { // 특정 게시글 댓글 추가 POST 요청 라우팅
+    const {id, name, password, comment} = req.body;
+    const post = await postService.getPostById(collection, id);
+    
+    if(post.comments){
+        post.comments.push({
+            idx: post.comments.length + 1, 
+            name, 
+            password, 
+            comment, 
+            createdDate: new Date().toISOString(), 
+        });
+    }
+    else{
+        post.comments = [{
+            idx: 1, 
+            name, 
+            password, 
+            comment, 
+            createdDate: new Date().toISOString(), 
+        }];
+    }
+
+    console.log(post);
+
+    try{
+        const result = await postService.updatePost(collection, id, post);
+    } catch (err){
+        console.log(err);
+    } finally{
+        res.redirect(`/detail/${id}`);
     }
 });
