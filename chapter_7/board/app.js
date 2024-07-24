@@ -152,9 +152,35 @@ app.post("/write-comment", async (req, res) => { // 특정 게시글 댓글 추�
 
     try{
         const result = await postService.updatePost(collection, id, post);
+
+        if(result.ok === 1){
+            console.log("댓글 추가 완료");
+        }
+        else{
+            console.log("댓글 추가 오류");
+        }
     } catch (err){
         console.log(err);
     } finally{
         res.redirect(`/detail/${id}`);
+    }
+});
+
+app.delete("/delete-comment", async (req, res) => {
+    const {id, idx, password} = req.body;
+
+    const result = await collection.findOne({
+        _id: ObjectId(id), 
+        comments: {$elemMatch: {idx: parseInt(idx), password}}, 
+    }, postService.projectionObj);
+
+    if(!result){
+        res.json({isSuccess: false});
+    }
+    else{
+        result.comments = result.comments.filter((comment) => {comment.idx != +idx});
+        console.log(result);
+        await postService.updatePost(collection, id, result);
+        res.json({isSuccess: true});
     }
 });

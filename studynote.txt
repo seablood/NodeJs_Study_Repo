@@ -3,3 +3,4 @@
 3. var/let/const 개념: https://www.freecodecamp.org/korean/news/var-let-constyi-caijeomeun/
 4. 패키지 스크립트 & npx: https://www.daleseo.com/js-npm-run-script/
 5. async & await: https://velog.io/@tosspayments/%EC%98%88%EC%A0%9C%EB%A1%9C-%EC%9D%B4%ED%95%B4%ED%95%98%EB%8A%94-awaitasync-%EB%AC%B8%EB%B2%95
+6. url query 숨기기: https://graykang.tistory.com/entry/GET-URL%ED%98%B8%EC%B6%9C%EC%8B%9C-parameter-%EC%82%AD%EC%A0%9C
