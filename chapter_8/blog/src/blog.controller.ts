@@ -6,9 +6,9 @@ export class BlogController {
     constructor(private blogService: BlogService) {}
 
     @Get()
-    getAllPosts() {
+    async getAllPosts() {
         console.log("모든 게시물 로딩");
-        return this.blogService.getAllPosts();
+        return await this.blogService.getAllPosts();
     }
 
     @Post()
@@ -20,9 +20,9 @@ export class BlogController {
     }
 
     @Get('/:id')
-    getPost(@Param('id') id: string) {
+    async getPost(@Param('id') id: string) {
         console.log(`${id} 게시물 로딩`);
-        return this.blogService.getPost(id);
+        return await this.blogService.getPost(id);
     }
 
     @Delete('/:id')
