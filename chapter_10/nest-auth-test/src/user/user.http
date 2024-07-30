@@ -1,0 +1,25 @@
+### 유저 추가
+POST http://localhost:3000/user/create
+content-type: application/json
+
+{
+  "username": "Choi",
+  "password": "7777777",
+  "email": "dudwnszero@naver.com"
+}
+
+### 유저 찾기 
+GET http://localhost:3000/user/getUser/dudwnszero@naver.com
+
+
+### 유저 업데이트 
+PUT http://localhost:3000/user/updateUser/dudwnszero@naver.com
+content-type: application/json
+
+{
+  "username": "영준",
+  "password": "777"
+}
+
+### 유저 삭제 
+DELETE http://localhost:3000/user/deleteUser/dudwnszero@naver.com
