@@ -1,0 +1,30 @@
+### 회원 가입
+POST http://localhost:3000/auth/register
+content-type: application/json
+
+{
+    "email" : "dudwnszero@gmail.com",
+    "password" : "1234",
+    "username" : "Kim"
+}
+
+### 로그인 
+POST http://localhost:3000/auth/loginOfGuard
+content-type: application/json
+
+{
+    "email" : "dudwnszero99@gmail.com",
+    "password" : "1234"
+}
+
+### LoginOfGuard
+POST http://localhost:3000/auth/loginOfGuard
+content-type: application/json
+
+{
+   "email" : "dudwnszero99@gmail.com", 
+   "password" : "1234"
+}
+
+### Guard 테스트
+GET http://localhost:3000/auth/test-guard

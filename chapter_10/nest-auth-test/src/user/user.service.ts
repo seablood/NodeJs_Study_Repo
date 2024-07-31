@@ -8,7 +8,7 @@ import { CreateUser, UpdateUser } from './user.dto';
 export class UserService {
     constructor(@InjectRepository(User) private userRepository: Repository<User>) {}
 
-    saveUser(user: CreateUser){
+    async saveUser(user: CreateUser){
         return this.userRepository.save(user);
     }
 

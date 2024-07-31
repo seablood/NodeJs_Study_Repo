@@ -9,7 +9,7 @@ content-type: application/json
 }
 
 ### 유저 찾기 
-GET http://localhost:3000/user/getUser/dudwnszero@naver.com
+GET http://localhost:3000/user/getUser/dudwnszero99@gmail.com
 
 
 ### 유저 업데이트 
