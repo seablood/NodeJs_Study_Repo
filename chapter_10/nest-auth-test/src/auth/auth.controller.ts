@@ -2,6 +2,7 @@ import { Controller, Post, Body, Request, Response, UseGuards, Get } from '@nest
 import { AuthService } from './auth.service';
 import { CreateUser } from 'src/user/user.dto';
 import { LoginGuard } from './auth.guard';
+import { LoginAuthGuard, AuthenticatedGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -52,5 +53,17 @@ export class AuthController {
     @Get('/test-guard')
     testGuard() {
         return '로그인할 때만 보이는 페이지';
+    }
+
+    @UseGuards(LoginAuthGuard)
+    @Post('/session-login')
+    sessionLogin(@Request() req) {
+        return req.user;
+    }
+
+    @UseGuards(AuthenticatedGuard)
+    @Get('/test-guard2')
+    sessionGuard(@Request() req) {
+        return req.user;
     }
 }
